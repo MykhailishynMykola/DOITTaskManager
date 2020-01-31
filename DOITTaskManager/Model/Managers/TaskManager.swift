@@ -10,13 +10,17 @@ import PromiseKit
 import Swinject
 
 protocol TaskManager {
-    func getTasks() -> Promise<[Task]>
+    func getTasks(with sortingOption: SortingOption?) -> Promise<[Task]>
+    func getTaskDetails(by identifier: Int) -> Promise<Task>
+    func deleteTask(with identifier: Int) -> Promise<Void>
+    func updateTask(_ task: Task) -> Promise<Void>
+    func addTask(_ task: Task) -> Promise<Void>
 }
 
 class TaskManagerImp: DataManager, TaskManager {
     // MARK: - Properties
     
-    private var authManager: AuthManager?
+    private var authManager: AuthManager!
     
     
     
@@ -31,11 +35,11 @@ class TaskManagerImp: DataManager, TaskManager {
     
     // MARK: - TaskManager
     
-    func getTasks() -> Promise<[Task]> {
-        guard let token = authManager?.token else {
+    func getTasks(with sortingOption: SortingOption?) -> Promise<[Task]> {
+        guard let token = authManager.token else {
             return Promise(error: AuthError.noToken)
         }
-        let requestBuilder: TaskRequestBuilder = .getTasks(token: token.value)
+        let requestBuilder: TaskRequestBuilder = .getTasks(sortingOption: sortingOption, token: token.value)
         return getData(with: requestBuilder)
             .then { data in
                 guard let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
@@ -47,6 +51,48 @@ class TaskManagerImp: DataManager, TaskManager {
                 let tasks: [Task] = tasksRawData.compactMap { Task(rawData: $0) }
                 return Promise(value: tasks)
         }
+    }
+    
+    func getTaskDetails(by identifier: Int) -> Promise<Task> {
+        guard let token = authManager?.token else {
+            return Promise(error: AuthError.noToken)
+        }
+        let requestBuilder: TaskRequestBuilder = .getDetails(identifier: identifier, token: token.value)
+        return getData(with: requestBuilder)
+            .then { data in
+                guard let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
+                    throw DataManagerError.wrongResponseData
+                }
+                guard let rawData = responseJSON["task"] as? [String : Any],
+                    let task = Task(rawData: rawData) else {
+                    throw TaskManagerError.noData
+                }
+                return Promise(value: task)
+        }
+    }
+    
+    func deleteTask(with identifier: Int) -> Promise<Void> {
+        guard let token = authManager?.token else {
+            return Promise(error: AuthError.noToken)
+        }
+        let requestBuilder: TaskRequestBuilder = .deleteTask(identifier: identifier, token: token.value)
+        return getData(with: requestBuilder).asVoid()
+    }
+    
+    func updateTask(_ task: Task) -> Promise<Void> {
+        guard let token = authManager?.token else {
+            return Promise(error: AuthError.noToken)
+        }
+        let requestBuilder: TaskRequestBuilder = .updateTask(task, token: token.value)
+        return getData(with: requestBuilder).asVoid()
+    }
+    
+    func addTask(_ task: Task) -> Promise<Void> {
+        guard let token = authManager?.token else {
+            return Promise(error: AuthError.noToken)
+        }
+        let requestBuilder: TaskRequestBuilder = .addTask(task, token: token.value)
+        return getData(with: requestBuilder).asVoid()
     }
 }
 

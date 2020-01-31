@@ -31,6 +31,10 @@ enum AuthRequestBuilder: RequestBuilder {
         }
     }
     
+    var query: [String: String]? {
+        return nil
+    }
+    
     var authToken: String? {
         return nil
     }

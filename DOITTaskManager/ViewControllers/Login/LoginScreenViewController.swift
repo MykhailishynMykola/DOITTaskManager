@@ -23,6 +23,10 @@ class LoginScreenViewController: ScreenViewController {
     private weak var layoutController: LoginLayoutController?
     private var authManager: AuthManager?
     
+    override var hideKeyboardWhenTappedAround: Bool {
+        return true
+    }
+    
     
     
     // MARK: - Overrides
@@ -84,11 +88,11 @@ extension LoginScreenViewController: LoginLayoutControllerDelegate {
     
     private func isValid(email: String, password: String) -> Bool {
         guard isValidEmail(email) else {
-            showErrorMessage("Invalid email!")
+            showError(message: "Invalid email!")
             return false
         }
         guard !password.isEmpty else {
-            showErrorMessage("Password should not be empty!")
+            showError(message: "Password should not be empty!")
             return false
         }
         return true

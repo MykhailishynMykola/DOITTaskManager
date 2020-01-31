@@ -6,6 +6,7 @@ target 'DOITTaskManager' do
   use_frameworks!
   pod 'PromiseKit/CorePromise', '~> 4.5.2'
   pod 'Swinject'
+  pod 'DropDown'
   # Pods for DOITTaskManager
 
 end

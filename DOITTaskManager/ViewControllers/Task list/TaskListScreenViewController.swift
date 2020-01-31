@@ -9,7 +9,7 @@
 import UIKit
 import Swinject
 
-class TaskListScreenViewController: ScreenViewController, TaskListLayoutControllerDelegate {
+class TaskListScreenViewController: ScreenViewController {
     // MARK: - Inner types
     
     private enum SegueIdentifier: String {
@@ -20,8 +20,10 @@ class TaskListScreenViewController: ScreenViewController, TaskListLayoutControll
     
     // MARK: - Properties
     
+    private var tasks: [Task] = []
     private weak var layoutController: TaskListLayoutController?
     private var taskManager: TaskManager?
+    private var selectedSortingOption: SortingOption?
     
     
     
@@ -29,10 +31,13 @@ class TaskListScreenViewController: ScreenViewController, TaskListLayoutControll
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        taskManager?.getTasks()
-            .then { [weak self] tasks in
-                self?.layoutController?.tasks = tasks
-        }
+        configureNavigationBar()
+        update()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        update()
     }
     
     override func setupDependencies(with resolver: Resolver) {
@@ -52,5 +57,69 @@ class TaskListScreenViewController: ScreenViewController, TaskListLayoutControll
         default:
             break
         }
+    }
+    
+    
+    
+    // MARK: - Private
+    
+    private func update() {
+        taskManager?.getTasks(with: selectedSortingOption)
+            .then { [weak self] tasks -> Void in
+                self?.tasks = tasks
+                self?.layoutController?.tasks = tasks
+        }
+    }
+    
+    private func configureNavigationBar() {
+        let bellImage = UIImage(systemName: "bell")
+        let bellButton = UIBarButtonItem(image: bellImage, style: .plain, target: self, action: #selector(notificationButtonPressed))
+        navigationItem.leftBarButtonItem  = bellButton
+        
+        navigationItem.title = "My Tasks"
+        
+        let listImage = UIImage(systemName: "list.bullet")
+        let listButton = UIBarButtonItem(image: listImage, style: .plain, target: self, action: #selector(sortButtonPressed))
+        navigationItem.rightBarButtonItem = listButton
+    }
+    
+    
+    
+    // MARK: - Actions
+    
+    @objc private func notificationButtonPressed() {
+        
+    }
+    
+    @objc private func sortButtonPressed() {
+        layoutController?.showDropdown()
+    }
+}
+
+
+
+extension TaskListScreenViewController: TaskListLayoutControllerDelegate {
+    func layoutController(_ layoutController: TaskListLayoutController, didAskToSelectRowWith index: Int) {
+        guard let detailViewController = presentViewController(withIdentifier: "TaskDetails", fromNavigation: true) as? TaskDetailScreenViewController,
+            tasks.indices.contains(index) else {
+            return
+        }
+        detailViewController.taskIdentifier = tasks[index].identifier
+    }
+    
+    func layoutController(_ layoutController: TaskListLayoutController, didAskToSortBy option: SortingOption) {
+        selectedSortingOption = option
+        update()
+    }
+    
+    func layoutControllerDidAskToAddTask(_ layoutController: TaskListLayoutController) {
+        guard let editTaskViewController = presentViewController(withIdentifier: "EditTask", fromNavigation: true) as? EditTaskScreenViewController else {
+            return
+        }
+        editTaskViewController.style = .addTask
+    }
+    
+    func layoutControllerDidAskToRefresh(_ layoutController: TaskListLayoutController) {
+         update()
     }
 }

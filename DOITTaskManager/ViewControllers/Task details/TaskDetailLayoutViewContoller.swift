@@ -1,5 +1,5 @@
 //
-//  TaskListTableViewCell.swift
+//  TaskDetailLayoutViewContoller.swift
 //  DOITTaskManager
 //
 //  Created by Nikolay Mikhailishin on 1/30/20.
@@ -8,39 +8,49 @@
 
 import UIKit
 
-class TaskListTableViewCell: UITableViewCell {
+class TaskDetailLayoutViewContoller: UIViewController, TaskDetailLayoutContoller {
     // MARK: - Properties
     
     @IBOutlet private weak var titleLabel: UILabel!
     @IBOutlet private weak var dateLabel: UILabel!
     @IBOutlet private weak var priorityLabel: UILabel!
-    @IBOutlet private weak var iconView: UIImageView!
     
-    
-    
-    // MARK: - Override
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        selectionStyle = .none
-        iconView.image = UIImage(systemName: "chevron.right")
+    var task: Task? {
+        didSet {
+            guard isViewLoaded, let task = task else { return }
+            update(with: task)
+        }
     }
     
     
     
+    // MARK: - TaskDetailLayoutContoller
     
-    // MARK: - Public
+    weak var delegate: TaskDetailLayoutContollerDelegate?
     
-    func update(with task: Task) {
+    
+    
+    // MARK: - Private
+    
+    private func update(with task: Task) {
         titleLabel.text = task.title
-        priorityLabel.text = task.priority.string
         
         let date = Date(timeIntervalSince1970: task.expirationDate)
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
         dateFormatter.locale = NSLocale.current
-        dateFormatter.dateFormat = "dd/MM/yy"
+        dateFormatter.dateFormat = "EEEE dd MMM, yyyy"
         let strDate = dateFormatter.string(from: date)
         dateLabel.text = strDate
+        
+        priorityLabel.text = task.priority.string
+    }
+    
+    
+    
+    // MARK: - Actions
+    
+    @IBAction private func deleteButtonPressed(_ sender: Any) {
+        delegate?.layoutControllerDidAskToRemoveTask(self)
     }
 }

@@ -7,32 +7,65 @@
 //
 
 enum TaskRequestBuilder: RequestBuilder {
-    case getTasks(token: String)
+    case getTasks(sortingOption: SortingOption?, token: String)
+    case getDetails(identifier: Int, token: String)
+    case deleteTask(identifier: Int, token: String)
+    case updateTask(_ task: Task, token: String)
+    case addTask(_ task: Task, token: String)
     
     var subpath: String {
         switch self {
-        case .getTasks:
+        case .getTasks, .addTask:
             return "/tasks"
+        case .getDetails(let identifier, _),
+             .deleteTask(let identifier, _):
+            return "/tasks/\(identifier)"
+        case .updateTask(let task, _):
+            return "/tasks/\(task.identifier)"
         }
     }
     
     var method: RequestMethod {
         switch self {
-        case .getTasks:
+        case .getTasks, .getDetails:
             return .get
+        case .deleteTask:
+            return .delete
+        case .updateTask:
+            return .put
+        case .addTask:
+            return .post
         }
     }
     
     var body: [String: Any]? {
         switch self {
-        case .getTasks:
+        case .getDetails, .getTasks, .deleteTask:
+            return nil
+        case .updateTask(let task, _),
+             .addTask(let task, token: _):
+            return ["title": task.title,
+                    "dueBy": task.expirationDate,
+                    "priority": task.priority.rawValue]
+        }
+    }
+    
+    var query: [String: String]? {
+        switch self {
+        case .getTasks(let sortingOption, _) where sortingOption != nil:
+            return ["sort": sortingOption!.apiPath]
+        default:
             return nil
         }
     }
     
     var authToken: String? {
         switch self {
-        case .getTasks(let token):
+        case .getDetails(_, let token),
+             .getTasks(_, let token),
+             .deleteTask(_, let token),
+             .updateTask(_, let token),
+             .addTask(_, let token):
             return token
         }
     }

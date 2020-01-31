@@ -125,6 +125,7 @@
                             <constraint firstItem="wQD-8j-5dJ" firstAttribute="centerY" secondItem="WQD-po-x90" secondAttribute="centerY" id="GpK-3X-ETE"/>
                             <constraint firstItem="wQD-8j-5dJ" firstAttribute="centerX" secondItem="WQD-po-x90" secondAttribute="centerX" id="g9A-ci-6dR"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="f0X-oV-Cnl"/>
                     </view>
                     <connections>
                         <outlet property="emailTextField" destination="Ky1-Qc-DaB" id="uYt-7d-eK6"/>

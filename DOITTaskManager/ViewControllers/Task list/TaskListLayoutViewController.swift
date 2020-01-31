@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import DropDown
 
 class TaskListLayoutViewController: UIViewController, TaskListLayoutController {
     // MARK: - Inner types
@@ -19,8 +20,9 @@ class TaskListLayoutViewController: UIViewController, TaskListLayoutController {
     
     // MARK: - Properties
     
-    
     @IBOutlet private weak var tableView: UITableView!
+    private var refreshControl = UIRefreshControl()
+    private let dropDown = DropDown()
     
     
 
@@ -30,9 +32,15 @@ class TaskListLayoutViewController: UIViewController, TaskListLayoutController {
     var tasks: [Task] = [] {
         didSet {
             guard isViewLoaded else { return }
+            refreshControl.endRefreshing()
             tableView.reloadData()
         }
     }
+    
+    func showDropdown() {
+        dropDown.show()
+    }
+    
     
     
     
@@ -48,14 +56,44 @@ class TaskListLayoutViewController: UIViewController, TaskListLayoutController {
     // MARK: - Private
     
     private func configureUI() {
+        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        tableView.addSubview(refreshControl)
         
+        dropDown.anchorView = view
+        dropDown.dataSource = SortingOption.allTypes.map { $0.rawValue }
+        dropDown.selectionAction = { [weak self] (index: Int, item: String) in
+            let allOptions = SortingOption.allTypes
+            guard let `self` = self, allOptions.indices.contains(index) else {
+                return
+            }
+            let selectedOption = allOptions[index]
+            self.delegate?.layoutController(self, didAskToSortBy: selectedOption)
+        }
+        dropDown.width = 200
+        dropDown.direction = .bottom
+        dropDown.bottomOffset = CGPoint(x: DeviceInfo.screenSize.width-200, y: 0)
+    }
+    
+    
+    
+    // MARK: - Actions
+    
+    @IBAction private func addButtonPressed(_ sender: Any) {
+        delegate?.layoutControllerDidAskToAddTask(self)
+    }
+    
+    @objc private func refresh(sender:AnyObject) {
+        delegate?.layoutControllerDidAskToRefresh(self)
     }
 }
 
 
 
 extension TaskListLayoutViewController: UITableViewDelegate {
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        delegate?.layoutController(self, didAskToSelectRowWith: indexPath.item)
+    }
 }
 
 

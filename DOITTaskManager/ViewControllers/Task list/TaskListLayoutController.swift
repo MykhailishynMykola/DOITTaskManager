@@ -9,10 +9,15 @@
 protocol TaskListLayoutController: class {
     var delegate: TaskListLayoutControllerDelegate? { get set }
     var tasks: [Task] { get set }
+    
+    func showDropdown()
 }
 
 
 
 protocol TaskListLayoutControllerDelegate: class {
-    
+    func layoutController(_ layoutController: TaskListLayoutController, didAskToSelectRowWith index: Int)
+    func layoutController(_ layoutController: TaskListLayoutController, didAskToSortBy option: SortingOption)
+    func layoutControllerDidAskToAddTask(_ layoutController: TaskListLayoutController)
+    func layoutControllerDidAskToRefresh(_ layoutController: TaskListLayoutController)
 }

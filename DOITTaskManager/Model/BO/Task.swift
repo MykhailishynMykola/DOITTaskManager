@@ -15,6 +15,17 @@ class Task {
         case low = "Low"
         case normal = "Normal"
         case high = "High"
+        
+        var string: String {
+            switch self {
+            case .high:
+                return "↑ High"
+            case .normal:
+                return "⬝ Normal"
+            case .low:
+                return "↓ Low"
+            }
+        }
     }
     
     
