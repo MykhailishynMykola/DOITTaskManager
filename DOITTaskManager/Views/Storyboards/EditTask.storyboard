@@ -67,6 +67,9 @@
                                         <color key="value" systemColor="opaqueSeparatorColor" red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <outlet property="delegate" destination="m1U-Rn-cAt" id="v22-NU-GX6"/>
+                                </connections>
                             </textView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JJT-Zq-52F">
                                 <rect key="frame" x="0.0" y="185.5" width="375" height="1"/>
@@ -150,6 +153,9 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="162" id="xRP-vt-xAl"/>
                                 </constraints>
+                                <connections>
+                                    <action selector="datePickerValueChanged:" destination="m1U-Rn-cAt" eventType="valueChanged" id="Ryh-ll-Kkd"/>
+                                </connections>
                             </datePicker>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Toc-Ez-XsP">
                                 <rect key="frame" x="0.0" y="567" width="375" height="100"/>
@@ -216,6 +222,7 @@
                             <constraint firstItem="pTw-l5-GeH" firstAttribute="centerY" secondItem="CYK-xM-Kyg" secondAttribute="centerY" id="yAJ-Ox-Y0r"/>
                             <constraint firstItem="KHx-32-x1B" firstAttribute="leading" secondItem="6jK-hW-BzI" secondAttribute="leading" id="ycy-fF-N9r"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="BSM-0h-Yz9"/>
                     </view>
                     <connections>
                         <outlet property="buttonWidthConstraint" destination="lfQ-n0-MMf" id="LoY-6P-V3V"/>

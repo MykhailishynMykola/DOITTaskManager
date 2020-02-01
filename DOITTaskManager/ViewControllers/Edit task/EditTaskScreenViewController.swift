@@ -27,9 +27,23 @@ class EditTaskScreenViewController: ScreenViewController {
     // MARK: - Properties
     
     var taskIdentifier: Int?
-    var style: Style = .editTask
+    var style: Style = .editTask {
+        didSet {
+            guard style == .addTask else { return }
+            // Preselect
+            openingDate = Date().timeIntervalSince1970
+            bufferPriority = .high
+            bufferDate = openingDate
+        }
+    }
     
     private weak var layoutController: EditTaskLayoutContoller?
+    private var openingDate: TimeInterval?
+    private var task: Task?
+    private var bufferTitle: String?
+    private var bufferPriority: Task.Priority?
+    private var bufferDate: TimeInterval?
+    
     private var taskManager: TaskManager? {
         didSet {
             update()
@@ -44,14 +58,31 @@ class EditTaskScreenViewController: ScreenViewController {
     
     // MARK: - Overrides
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configureNavigationBar()
+    override func configureNavigationBar() {
+        super.configureNavigationBar()
+        if style == .editTask {
+            navigationItem.title = "Edit Task"
+            return
+        }
+        navigationItem.title = "Add Task"
     }
     
     override func setupDependencies(with resolver: Resolver) {
         super.setupDependencies(with: resolver)
         taskManager = resolver.resolve(TaskManager.self)
+    }
+    
+    override func backButtonTapped() {
+        let bufferTitleWasChanged = bufferTitle != nil && bufferTitle?.isEmpty != true
+        let newTaskWasChanged = style == .addTask
+            && (bufferTitleWasChanged || bufferPriority != .high || bufferDate != openingDate)
+        let existTaskWasChanged = style == .editTask
+            && (bufferTitle != task?.title || bufferPriority != task?.priority || bufferDate != task?.expirationDate)
+        guard newTaskWasChanged || existTaskWasChanged else {
+            navigationController?.popViewController(animated: true)
+            return
+        }
+        showSaveNotification()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -62,7 +93,7 @@ class EditTaskScreenViewController: ScreenViewController {
         case SegueIdentifier.showLayout.rawValue:
             let layoutController = segue.destination as? EditTaskLayoutContoller
             layoutController?.delegate = self
-            layoutController?.style = style
+            layoutController?.shouldShowDeleteButton = style == .editTask
             self.layoutController = layoutController
         default:
             break
@@ -70,29 +101,54 @@ class EditTaskScreenViewController: ScreenViewController {
     }
     
     
+    // MARK: - Private
     
-    // MARK: - Public
-    
-    func update() {
-        if let taskIdentifier = taskIdentifier, style == .editTask {
-            taskManager?.getTaskDetails(by: taskIdentifier)
-                .then { [weak self] task in
-                    self?.layoutController?.task = task
-            }
+    private func update() {
+        guard let taskIdentifier = taskIdentifier, style == .editTask else {
             return
+        }
+        taskManager?.getTaskDetails(by: taskIdentifier)
+            .then { [weak self] task -> Void in
+                self?.task = task
+                self?.bufferTitle = task.title
+                self?.bufferPriority = task.priority
+                self?.bufferDate = task.expirationDate
+                self?.layoutController?.task = task
         }
     }
     
+    private func showSaveNotification() {
+        let saveAction = UIAlertAction(title: "Save",
+                                       style: .default) { [weak self] _ in
+                                        self?.saveChangesAndDismiss()
+        }
+        let closeAction = UIAlertAction(title: "Close",
+                                  style: .default) { [weak self] _ in
+                                    self?.navigationController?.popViewController(animated: true)
+        }
+        showError(title: "Notification",
+                  message: "Do you want to save these changes?",
+                  primaryAction: saveAction,
+                  secondaryAction: closeAction)
+    }
     
-    
-    // MARK: - Private
-    
-    private func configureNavigationBar() {
-        if style == .editTask {
-            navigationItem.title = "Edit Task"
+    private func saveChangesAndDismiss() {
+        guard let title = bufferTitle, !title.isEmpty else {
+            showError(message: "Title couldn't be empty!")
             return
         }
-        navigationItem.title = "Add Task"
+        guard let priority = bufferPriority?.rawValue,
+            let expirationDate = bufferDate else {
+                return
+        }
+        let task = Task(title: title,
+                        identifier: taskIdentifier ?? 0,
+                        priority: priority,
+                        expirationDate: expirationDate)
+        let promise = style == .editTask ? taskManager?.updateTask(task) : taskManager?.addTask(task)
+        promise?.then { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        }
     }
 }
 
@@ -103,21 +159,20 @@ extension EditTaskScreenViewController: EditTaskLayoutContollerDelegate {
         showDeleteError() { [weak self] in self?.deleteTask()}
     }
     
-    func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSaveTaskWith title: String, priority: Task.Priority, date: Date) {
-        let task = Task(title: title,
-                        identifier: taskIdentifier ?? 0,
-                        priority: priority.rawValue,
-                        expirationDate: date.timeIntervalSince1970)
-        let promise: Promise<Void>?
-        if style == .editTask {
-            promise = taskManager?.updateTask(task)
-        }
-        else {
-            promise = taskManager?.addTask(task)
-        }
-        promise?.then { [weak self] _ in
-            self?.navigationController?.popViewController(animated: true)
-        }
+    func layoutControllerDidAskToSaveTask(_ layoutController: EditTaskLayoutContoller) {
+        saveChangesAndDismiss()
+    }
+    
+    func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSetTitleTo title: String) {
+        bufferTitle = title
+    }
+    
+    func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSetPriorityTo priority: Task.Priority) {
+        bufferPriority = priority
+    }
+    
+    func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSetDateTo date: TimeInterval) {
+        bufferDate = date
     }
     
     private func deleteTask() {

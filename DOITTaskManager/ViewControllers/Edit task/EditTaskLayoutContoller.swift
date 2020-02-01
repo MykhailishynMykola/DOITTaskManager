@@ -11,13 +11,17 @@ import Foundation
 protocol EditTaskLayoutContoller: class {
     var delegate: EditTaskLayoutContollerDelegate? { get set }
     var task: Task? { get set }
-    var style: EditTaskScreenViewController.Style? { get set }
+    var shouldShowDeleteButton: Bool { get set }
 }
 
 
 
 protocol EditTaskLayoutContollerDelegate: class {
     func layoutControllerDidAskToRemoveTask(_ layoutController: EditTaskLayoutContoller)
-    func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSaveTaskWith title: String, priority: Task.Priority, date: Date)
+    func layoutControllerDidAskToSaveTask(_ layoutController: EditTaskLayoutContoller)
+    
+    func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSetTitleTo title: String)
+    func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSetPriorityTo priority: Task.Priority)
+    func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSetDateTo date: TimeInterval)
 }
 

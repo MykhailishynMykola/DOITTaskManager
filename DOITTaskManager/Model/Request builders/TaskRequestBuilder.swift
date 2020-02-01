@@ -45,7 +45,7 @@ enum TaskRequestBuilder: RequestBuilder {
         case .updateTask(let task, _),
              .addTask(let task, token: _):
             return ["title": task.title,
-                    "dueBy": task.expirationDate,
+                    "dueBy": Int(task.expirationDate),
                     "priority": task.priority.rawValue]
         }
     }

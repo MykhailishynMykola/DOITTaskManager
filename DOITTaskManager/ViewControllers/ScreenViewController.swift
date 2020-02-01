@@ -26,6 +26,7 @@ class ScreenViewController: UIViewController {
         super.viewDidLoad()
         registerTapAroundGesture()
         setupDependencies(with: resolver)
+        configureNavigationBar()
     }
     
     
@@ -36,9 +37,18 @@ class ScreenViewController: UIViewController {
         
     }
     
+    func configureNavigationBar() {
+        navigationItem.hidesBackButton = true
+        
+        let backButtonImage = UIImage(systemName: "chevron.left")
+        let backButton = UIBarButtonItem(image: backButtonImage, style: .plain, target: self, action: #selector(backButtonPressed))
+        navigationItem.leftBarButtonItem  = backButton
+    }
+    
     func showError(title: String = "Error!", message: String? = nil, primaryAction: UIAlertAction = UIAlertAction(title: "Ok", style: .default, handler: nil), secondaryAction: UIAlertAction? = nil) {
-        let alertController = UIAlertController(title: "Error!", message: message, preferredStyle: .alert)
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertController.addAction(primaryAction)
+        alertController.preferredAction = primaryAction
         if let secondaryAction = secondaryAction {
             alertController.addAction(secondaryAction)
         }
@@ -75,6 +85,10 @@ class ScreenViewController: UIViewController {
         }
     }
     
+    func backButtonTapped() {
+        dismiss(animated: true, completion: nil)
+    }
+    
     @discardableResult func presentViewController(withIdentifier identifier: String, storyboardIdentifier: String? = nil, fromNavigation: Bool = false) -> UIViewController {
         let storyboard = UIStoryboard(name: storyboardIdentifier ?? identifier, bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: identifier)
@@ -104,8 +118,16 @@ class ScreenViewController: UIViewController {
         view.addGestureRecognizer(tap)
     }
     
+    
+    
+    // MARK: - Actions
+    
     @objc private func dismissKeyboard() {
         guard hideKeyboardWhenTappedAround else { return }
         view.endEditing(true)
+    }
+    
+    @objc private func backButtonPressed() {
+        backButtonTapped()
     }
 }

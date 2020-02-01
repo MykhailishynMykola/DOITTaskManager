@@ -33,9 +33,13 @@ class TaskDetailScreenViewController: ScreenViewController {
     
     // MARK: - Overrides
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configureNavigationBar()
+    override func configureNavigationBar() {
+        super.configureNavigationBar()
+        navigationItem.title = "Task Details"
+        
+        let listImage = UIImage(systemName: "pencil")
+        let listButton = UIBarButtonItem(image: listImage, style: .plain, target: self, action: #selector(editButtonPressed))
+        navigationItem.rightBarButtonItem  = listButton
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,6 +50,10 @@ class TaskDetailScreenViewController: ScreenViewController {
     override func setupDependencies(with resolver: Resolver) {
         super.setupDependencies(with: resolver)
         taskManager = resolver.resolve(TaskManager.self)
+    }
+    
+    override func backButtonTapped() {
+        navigationController?.popViewController(animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -74,18 +82,6 @@ class TaskDetailScreenViewController: ScreenViewController {
             .then { [weak self] task in
                 self?.layoutController?.task = task
         }
-    }
-    
-    
-    
-    // MARK: - Private
-    
-    private func configureNavigationBar() {
-        navigationItem.title = "Task Details"
-        
-        let listImage = UIImage(systemName: "pencil")
-        let listButton = UIBarButtonItem(image: listImage, style: .plain, target: self, action: #selector(editButtonPressed))
-        navigationItem.rightBarButtonItem  = listButton
     }
     
     

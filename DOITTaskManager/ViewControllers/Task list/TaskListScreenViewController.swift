@@ -31,13 +31,25 @@ class TaskListScreenViewController: ScreenViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureNavigationBar()
         update()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         update()
+    }
+    
+    override func configureNavigationBar() {
+        super.configureNavigationBar()
+        let bellImage = UIImage(systemName: "bell")
+        let bellButton = UIBarButtonItem(image: bellImage, style: .plain, target: self, action: #selector(notificationButtonPressed))
+        navigationItem.leftBarButtonItem  = bellButton
+        
+        navigationItem.title = "My Tasks"
+        
+        let listImage = UIImage(systemName: "list.bullet")
+        let listButton = UIBarButtonItem(image: listImage, style: .plain, target: self, action: #selector(sortButtonPressed))
+        navigationItem.rightBarButtonItem = listButton
     }
     
     override func setupDependencies(with resolver: Resolver) {
@@ -69,18 +81,6 @@ class TaskListScreenViewController: ScreenViewController {
                 self?.tasks = tasks
                 self?.layoutController?.tasks = tasks
         }
-    }
-    
-    private func configureNavigationBar() {
-        let bellImage = UIImage(systemName: "bell")
-        let bellButton = UIBarButtonItem(image: bellImage, style: .plain, target: self, action: #selector(notificationButtonPressed))
-        navigationItem.leftBarButtonItem  = bellButton
-        
-        navigationItem.title = "My Tasks"
-        
-        let listImage = UIImage(systemName: "list.bullet")
-        let listButton = UIBarButtonItem(image: listImage, style: .plain, target: self, action: #selector(sortButtonPressed))
-        navigationItem.rightBarButtonItem = listButton
     }
     
     

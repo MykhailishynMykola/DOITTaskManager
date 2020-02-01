@@ -18,7 +18,6 @@ class EditTaskLayoutViewContoller: UIViewController, EditTaskLayoutContoller {
     @IBOutlet private weak var expiredDatePicker: UIDatePicker!
     @IBOutlet private weak var deleteButton: UIButton!
     
-    private var selectedPriority: Task.Priority?
     private var priorities: [Task.Priority] {
         return [.high, .normal, .low]
     }
@@ -35,7 +34,7 @@ class EditTaskLayoutViewContoller: UIViewController, EditTaskLayoutContoller {
         }
     }
     
-    var style: EditTaskScreenViewController.Style? {
+    var shouldShowDeleteButton: Bool = false {
         didSet {
             guard isViewLoaded else { return }
             configureUI()
@@ -62,19 +61,15 @@ class EditTaskLayoutViewContoller: UIViewController, EditTaskLayoutContoller {
         let availableWidth = screenWidth - horisontalInset * 2 - horisontalInsetBetweenButtons * 2
         let buttonMaxWidth: CGFloat = availableWidth / 3
         buttonWidthConstraint.constant = buttonMaxWidth
-        if style == .addTask {
-            selectedPriority = .high
-            let preselectedButton = priorityButtons.first
-            preselectedButton?.backgroundColor = .gray
-            preselectedButton?.setTitleColor(.white, for: .normal)
-            deleteButton.isHidden = true
+        
+        if let preselectedButton = priorityButtons.first {
+            selectButton(preselectedButton)
         }
+        
+        deleteButton.isHidden = !shouldShowDeleteButton
     }
     
     private func update(with task: Task) {
-        guard let style = style, style == .editTask else {
-            return
-        }
         titleTextView.text = task.title
         
         guard let selectedIndex = priorities.firstIndex(of: task.priority),
@@ -82,16 +77,33 @@ class EditTaskLayoutViewContoller: UIViewController, EditTaskLayoutContoller {
             return
         }
         let selectedButton = priorityButtons[selectedIndex]
-        selectedButton.backgroundColor = .gray
-        selectedButton.setTitleColor(.white, for: .normal)
-        selectedPriority = task.priority
+        selectButton(selectedButton)
         
         expiredDatePicker.date = Date(timeIntervalSince1970: task.expirationDate)
+    }
+    
+    private func selectButton(_ selectedButton: UIButton) {
+        priorityButtons.enumerated().forEach { index, button in
+            if button === selectedButton {
+                button.backgroundColor = .gray
+                button.setTitleColor(.white, for: .normal)
+                if priorities.indices.contains(index) {
+                     delegate?.layoutController(self, didAskToSetPriorityTo: priorities[index])
+                }
+                return
+            }
+            button.backgroundColor = .white
+            button.setTitleColor(.gray, for: .normal)
+        }
     }
     
     
     
     // MARK: - Actions
+    
+    @IBAction private func datePickerValueChanged(_ sender: Any) {
+        delegate?.layoutController(self, didAskToSetDateTo: expiredDatePicker.date.timeIntervalSince1970)
+    }
     
     @IBAction private func deleteButtonPressed(_ sender: Any) {
         delegate?.layoutControllerDidAskToRemoveTask(self)
@@ -101,27 +113,18 @@ class EditTaskLayoutViewContoller: UIViewController, EditTaskLayoutContoller {
         guard let selectedButton = sender as? UIButton else {
             return
         }
-        
-        priorityButtons.enumerated().forEach { index, button in
-            if button === selectedButton {
-                button.backgroundColor = .gray
-                button.setTitleColor(.white, for: .normal)
-                selectedPriority = priorities.indices.contains(index)
-                    ? priorities[index]
-                    : nil
-                return
-            }
-            button.backgroundColor = .white
-            button.setTitleColor(.gray, for: .normal)
-        }
+        selectButton(selectedButton)
     }
-    
     
     @IBAction private func saveButtonPressed(_ sender: Any) {
-        guard let selectedPriority = selectedPriority else {
-            return
-        }
-        delegate?.layoutController(self, didAskToSaveTaskWith: titleTextView.text, priority: selectedPriority, date: expiredDatePicker.date)
+        delegate?.layoutControllerDidAskToSaveTask(self)
     }
-    
+}
+
+
+
+extension EditTaskLayoutViewContoller: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        delegate?.layoutController(self, didAskToSetTitleTo: textView.text)
+    }
 }
