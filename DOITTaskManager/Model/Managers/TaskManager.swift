@@ -46,7 +46,7 @@ class TaskManagerImp: DataManager, TaskManager {
                     throw DataManagerError.wrongResponseData
                 }
                 guard let tasksRawData = responseJSON["tasks"] as? [[String: Any]] else {
-                    throw TaskManagerError.noData
+                    throw TaskManagerError.failed(errorData: responseJSON)
                 }
                 let tasks: [Task] = tasksRawData.compactMap { Task(rawData: $0) }
                 return Promise(value: tasks)
@@ -65,7 +65,7 @@ class TaskManagerImp: DataManager, TaskManager {
                 }
                 guard let rawData = responseJSON["task"] as? [String : Any],
                     let task = Task(rawData: rawData) else {
-                    throw TaskManagerError.noData
+                        throw TaskManagerError.failed(errorData: responseJSON)
                 }
                 return Promise(value: task)
         }
@@ -97,5 +97,5 @@ class TaskManagerImp: DataManager, TaskManager {
 }
 
 enum TaskManagerError: Error {
-    case noData
+    case failed(errorData: NSDictionary)
 }

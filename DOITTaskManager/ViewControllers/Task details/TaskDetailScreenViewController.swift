@@ -81,6 +81,9 @@ class TaskDetailScreenViewController: ScreenViewController {
         taskManager?.getTaskDetails(by: taskIdentifier)
             .then { [weak self] task in
                 self?.layoutController?.task = task
+            }
+            .catch { [weak self] error in
+                self?.handleError(error)
         }
     }
     
@@ -110,6 +113,9 @@ extension TaskDetailScreenViewController: TaskDetailLayoutContollerDelegate {
         taskManager?.deleteTask(with: taskIdentifier)
             .then { [weak self] _ in
                 self?.navigationController?.popViewController(animated: true)
+            }
+            .catch { [weak self] error in
+                self?.handleError(error)
         }
     }
 }

@@ -71,15 +71,20 @@ class ScreenViewController: UIViewController {
         switch error {
         case is RequestBuilderError:
             showError(message: "Request failed: Couldn't create a request!")
-        case let dataManagerError as DataManagerError:
-            switch dataManagerError {
-            case .apiError(let message):
-                showError(message: "Request failed: \(message)")
-            default:
-                showError(message: "Request failed: Wrong response data!")
+        case is DataManagerError:
+            showError(message: "Request failed: Wrong response data!")
+        case let taskManagerError as TaskManagerError:
+            switch taskManagerError {
+            case .failed(let errorData):
+                handleApiErrorData(errorData)
             }
-        case is AuthError:
-            showError(message: "Authentification failed: No token")
+        case let authError as AuthError:
+            switch authError {
+            case .failed(let errorData):
+                handleApiErrorData(errorData)
+            case .noToken:
+                showError(message: "Authentification failed: No token")
+            }
         default:
             break
         }
@@ -111,6 +116,26 @@ class ScreenViewController: UIViewController {
     
     
     // MARK: - Private
+    
+    private func handleApiErrorData(_ data: NSDictionary) {
+        var message: String = ""
+        if let messageDescription = data["message"] as? String {
+            message = messageDescription
+        }
+        if let submessageData = data["fields"] as? [String: Any] {
+            var submessage: String = ""
+            submessageData
+                .values
+                .forEach { data in
+                    if let values = data as? [String] {
+                        let sub = submessage.isEmpty ? "" : "\(submessage) "
+                        submessage = "\(sub)\(values.joined(separator: " "))"
+                    }
+            }
+            message = "\(message). \(submessage)"
+        }
+        showError(message: "Backend error: \(message)")
+    }
     
     private func registerTapAroundGesture() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))

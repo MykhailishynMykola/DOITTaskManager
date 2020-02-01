@@ -80,6 +80,9 @@ class TaskListScreenViewController: ScreenViewController {
             .then { [weak self] tasks -> Void in
                 self?.tasks = tasks
                 self?.layoutController?.tasks = tasks
+            }
+            .catch { [weak self] error in
+                self?.handleError(error)
         }
     }
     

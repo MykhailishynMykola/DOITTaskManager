@@ -48,12 +48,12 @@ class AuthManagerImp: DataManager, AuthManager {
     
     private func parseToken(with data: Data) -> Promise<Void> {
         return Promise(resolvers: { (fulfill, reject) in
-            guard let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) else {
+            guard let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
                 return reject(DataManagerError.wrongResponseData)
             }
             guard let responseData = responseJSON as? [String: String],
                 let tokenValue = responseData["token"] else {
-                    return reject(AuthError.noToken)
+                    return reject(AuthError.failed(errorData: responseJSON))
             }
             token = Token(value: tokenValue)
             return fulfill(())
@@ -65,4 +65,5 @@ class AuthManagerImp: DataManager, AuthManager {
 
 enum AuthError: Error {
     case noToken
+    case failed(errorData: NSDictionary)
 }

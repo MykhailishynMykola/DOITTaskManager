@@ -114,6 +114,9 @@ class EditTaskScreenViewController: ScreenViewController {
                 self?.bufferPriority = task.priority
                 self?.bufferDate = task.expirationDate
                 self?.layoutController?.task = task
+            }
+            .catch { [weak self] error in
+                self?.handleError(error)
         }
     }
     
@@ -148,6 +151,8 @@ class EditTaskScreenViewController: ScreenViewController {
         let promise = style == .editTask ? taskManager?.updateTask(task) : taskManager?.addTask(task)
         promise?.then { [weak self] _ in
             self?.navigationController?.popViewController(animated: true)
+        }.catch { [weak self] error in
+            self?.handleError(error)
         }
     }
 }

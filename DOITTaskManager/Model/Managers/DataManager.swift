@@ -59,26 +59,6 @@ class DataManager: ResolverInitializable {
             task.resume()
         })
     }
-    
-    private func apiError(withData errorData: NSDictionary) -> DataManagerError {
-        var message: String = ""
-        if let messageDescription = errorData["message"] as? String {
-            message = messageDescription
-        }
-        if let submessageData = errorData["fields"] as? [String: Any] {
-            var submessage: String = ""
-            submessageData
-                .values
-                .forEach { data in
-                    if let values = data as? [String] {
-                        let sub = submessage.isEmpty ? "" : "\(submessage) "
-                        submessage = "\(sub)\(values.joined(separator: " "))"
-                    }
-            }
-            message = "\(message). \(submessage)"
-        }
-        return DataManagerError.apiError(message: message)
-    }
 }
 
 
@@ -86,6 +66,5 @@ class DataManager: ResolverInitializable {
 enum DataManagerError: Error {
     case noResponse
     case wrongResponseData
-    case apiError(message: String)
     case unknownError
 }
