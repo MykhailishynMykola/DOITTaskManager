@@ -45,7 +45,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2Ox-vb-oSm">
-                                <rect key="frame" x="0.0" y="75" width="375" height="128"/>
+                                <rect key="frame" x="0.0" y="10" width="375" height="128"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Meeting with clients for discussing a new project" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oS4-D5-97k">
                                         <rect key="frame" x="10" y="10" width="355" height="57.5"/>
@@ -72,19 +72,19 @@
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Priority" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YG7-Kd-6Kt">
-                                <rect key="frame" x="10" y="213" width="54.5" height="21"/>
+                                <rect key="frame" x="10" y="148" width="54.5" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" systemColor="systemGrayColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="- Normal" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wBm-Fy-pSh">
-                                <rect key="frame" x="297.5" y="213" width="67.5" height="20.5"/>
+                                <rect key="frame" x="297.5" y="148" width="67.5" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Din-Pi-bG3">
-                                <rect key="frame" x="0.0" y="243.5" width="375" height="1"/>
+                                <rect key="frame" x="0.0" y="178.5" width="375" height="1"/>
                                 <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="VBC-6L-d99"/>
@@ -114,12 +114,13 @@
                             <constraint firstItem="YG7-Kd-6Kt" firstAttribute="top" secondItem="2Ox-vb-oSm" secondAttribute="bottom" constant="10" id="Pcg-P4-Ga5"/>
                             <constraint firstItem="2Ox-vb-oSm" firstAttribute="leading" secondItem="ja6-m1-RMd" secondAttribute="leading" id="TFV-FY-L6C"/>
                             <constraint firstItem="YG7-Kd-6Kt" firstAttribute="leading" secondItem="ja6-m1-RMd" secondAttribute="leading" constant="10" id="dlM-uT-hAI"/>
-                            <constraint firstItem="2Ox-vb-oSm" firstAttribute="top" secondItem="ja6-m1-RMd" secondAttribute="top" constant="75" id="gfP-gD-UWu"/>
+                            <constraint firstItem="2Ox-vb-oSm" firstAttribute="top" secondItem="uaM-ap-Idp" secondAttribute="top" constant="10" id="gfP-gD-UWu"/>
                             <constraint firstItem="Din-Pi-bG3" firstAttribute="leading" secondItem="ja6-m1-RMd" secondAttribute="leading" id="rwN-zn-CYR"/>
                             <constraint firstAttribute="trailing" secondItem="wBm-Fy-pSh" secondAttribute="trailing" constant="10" id="voq-SN-pRQ"/>
                             <constraint firstAttribute="bottomMargin" secondItem="2zD-1B-7U5" secondAttribute="bottom" id="yho-e7-M6P"/>
                             <constraint firstItem="wBm-Fy-pSh" firstAttribute="top" secondItem="2Ox-vb-oSm" secondAttribute="bottom" constant="10" id="zgD-H9-YXd"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="uaM-ap-Idp"/>
                     </view>
                     <connections>
                         <outlet property="dateLabel" destination="EhV-dz-XoJ" id="hRm-2A-6JN"/>
