@@ -7,7 +7,7 @@
 //
 
 enum TaskRequestBuilder: RequestBuilder {
-    case getTasks(sortingOption: SortingOption?, token: String)
+    case getTasks(sortingOption: SortingOption?, page: Int, token: String)
     case getDetails(identifier: Int, token: String)
     case deleteTask(identifier: Int, token: String)
     case updateTask(_ task: Task, token: String)
@@ -52,8 +52,11 @@ enum TaskRequestBuilder: RequestBuilder {
     
     var query: [String: String]? {
         switch self {
-        case .getTasks(let sortingOption, _) where sortingOption != nil:
-            return ["sort": sortingOption!.apiPath]
+        case .getTasks(let sortingOption, let page, _):
+            if let sortingOption = sortingOption {
+                return ["sort": sortingOption.apiPath, "page": "\(page)"]
+            }
+            return ["page": "\(page)"]
         default:
             return nil
         }
@@ -62,7 +65,7 @@ enum TaskRequestBuilder: RequestBuilder {
     var authToken: String? {
         switch self {
         case .getDetails(_, let token),
-             .getTasks(_, let token),
+             .getTasks(_, _, let token),
              .deleteTask(_, let token),
              .updateTask(_, let token),
              .addTask(_, let token):

@@ -36,21 +36,7 @@ class TaskManagerImp: DataManager, TaskManager {
     // MARK: - TaskManager
     
     func getTasks(with sortingOption: SortingOption?) -> Promise<[Task]> {
-        guard let token = authManager.token else {
-            return Promise(error: AuthError.noToken)
-        }
-        let requestBuilder: TaskRequestBuilder = .getTasks(sortingOption: sortingOption, token: token.value)
-        return getData(with: requestBuilder)
-            .then { data in
-                guard let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
-                    throw DataManagerError.wrongResponseData
-                }
-                guard let tasksRawData = responseJSON["tasks"] as? [[String: Any]] else {
-                    throw TaskManagerError.failed(errorData: responseJSON)
-                }
-                let tasks: [Task] = tasksRawData.compactMap { Task(rawData: $0) }
-                return Promise(value: tasks)
-        }
+        return getTasks(with: sortingOption, page: 1, result: [])
     }
     
     func getTaskDetails(by identifier: Int) -> Promise<Task> {
@@ -93,6 +79,47 @@ class TaskManagerImp: DataManager, TaskManager {
         }
         let requestBuilder: TaskRequestBuilder = .addTask(task, token: token.value)
         return getData(with: requestBuilder).asVoid()
+    }
+    
+    
+    
+    // MARK: - Private
+    
+    private func getTasks(with sortingOption: SortingOption?, page: Int, result: [Task]) -> Promise<[Task]> {
+        guard let token = authManager.token else {
+            return Promise(error: AuthError.noToken)
+        }
+        let requestBuilder: TaskRequestBuilder = .getTasks(sortingOption: sortingOption, page: page, token: token.value)
+        return getData(with: requestBuilder)
+            .then { data in
+                guard let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
+                    throw DataManagerError.wrongResponseData
+                }
+                guard let tasksRawData = responseJSON["tasks"] as? [[String: Any]] else {
+                    throw TaskManagerError.failed(errorData: responseJSON)
+                }
+                let newTasks: [Task] = tasksRawData.compactMap { Task(rawData: $0) }
+                guard page == 1 else {
+                    return Promise(value: result + newTasks)
+                }
+                guard let metadata = responseJSON["meta"] as? [String: Int],
+                    let pageLimit = metadata["limit"],
+                    let totalCount = metadata["count"] else {
+                    return Promise(value: newTasks)
+                }
+                guard totalCount > pageLimit else {
+                    return Promise(value: newTasks)
+                }
+                let totalPages = Int(totalCount / pageLimit) + 1
+                var resultPromise = Promise(value: newTasks)
+                for i in 2...totalPages {
+                    resultPromise = resultPromise.then { [weak self] tasks -> Promise<[Task]> in
+                        guard let `self` = self else { return Promise(value: tasks) }
+                        return self.getTasks(with: sortingOption, page: i, result: tasks)
+                    }
+                }
+                return resultPromise
+        }
     }
 }
 
