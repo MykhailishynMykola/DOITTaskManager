@@ -85,6 +85,13 @@ class ScreenViewController: UIViewController {
             case .noToken:
                 showError(message: "Authentification failed: No token")
             }
+        case let notificationError as NotificationManagerError:
+            switch notificationError {
+            case .notificationCenterError(let error):
+                showError(message: "Notification service error: \(error)")
+            case .noAccess:
+                showError(message: "Notification service error: No access granted. You could change it in Settings -> Notifications")
+            }
         default:
             break
         }

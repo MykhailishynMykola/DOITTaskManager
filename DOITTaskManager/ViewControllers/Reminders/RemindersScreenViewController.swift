@@ -73,6 +73,9 @@ class RemindersScreenViewController: ScreenViewController {
             .then { [weak self] notifications -> Void in
                 let reminders = notifications.map { Reminder(identifier: $0.identifier, body: $0.body, date: $0.date) }
                 self?.layoutController?.reminders = reminders
+            }
+            .catch { [weak self] error in
+                self?.handleError(error)
         }
     }
     
@@ -86,6 +89,9 @@ class RemindersScreenViewController: ScreenViewController {
                                             self?.notificationManager?.removeAllNotifications()
                                                 .then { [weak self] _ in
                                                     self?.update()
+                                            }
+                                            .catch { [weak self] error in
+                                                self?.handleError(error)
                                             }
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
@@ -103,6 +109,9 @@ extension RemindersScreenViewController: RemindersLayoutContollerDelegate {
         notificationManager?.removeNotifications(with: [identifier])
             .then { [weak self] _ -> Void in
                 self?.update()
+            }
+            .catch { [weak self] error in
+                self?.handleError(error)
         }
     }
 }

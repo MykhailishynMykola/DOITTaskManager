@@ -201,6 +201,9 @@ extension EditTaskScreenViewController: EditTaskLayoutContollerDelegate {
         taskManager?.deleteTask(with: taskIdentifier)
             .then { [weak self] _ in
                 self?.navigationController?.popToRootViewController(animated: true)
+            }
+            .catch { [weak self] error in
+                self?.handleError(error)
         }
     }
 }
