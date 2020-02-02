@@ -7,7 +7,7 @@
 //
 
 enum SortingOption: String {
-    static var allTypes: [SortingOption] = [.titleAsc, .titleDesc, .dueToAsc, .dueToDesc, .priorityAsc, .priorityDesc]
+    static var allTypes: [SortingOption] = [.titleAsc, .titleDesc, .priorityAsc, .priorityDesc, .dueToAsc, .dueToDesc]
     
     case titleAsc = "↑ Title"
     case titleDesc = "↓ Title"
@@ -22,14 +22,14 @@ enum SortingOption: String {
             return "title asc"
         case .titleDesc:
             return "title desc"
-        case .dueToAsc:
-            return "dueBy asc"
-        case .dueToDesc:
-            return "dueBy desc"
         case .priorityAsc:
             return "priority asc"
         case .priorityDesc:
             return "priority desc"
+        case .dueToAsc:
+            return "dueBy asc"
+        case .dueToDesc:
+            return "dueBy desc"
         }
     }
 }

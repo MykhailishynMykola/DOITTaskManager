@@ -24,6 +24,7 @@ class TaskListScreenViewController: ScreenViewController {
     private weak var layoutController: TaskListLayoutController?
     private var taskManager: TaskManager?
     private var selectedSortingOption: SortingOption?
+    private var preselectedIndex: Int?
     
     
     
@@ -31,6 +32,12 @@ class TaskListScreenViewController: ScreenViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let rawValue = UserDefaults.standard.string(forKey: "sorting"),
+            let index = Int(rawValue),
+            SortingOption.allTypes.indices.contains(index) {
+            preselectedIndex = index
+            selectedSortingOption = SortingOption.allTypes[index]
+        }
         update()
     }
     
@@ -95,7 +102,7 @@ class TaskListScreenViewController: ScreenViewController {
     }
     
     @objc private func sortButtonPressed() {
-        layoutController?.showDropdown()
+        layoutController?.showDropdown(preselectedIndex: preselectedIndex)
     }
 }
 

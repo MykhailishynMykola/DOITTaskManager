@@ -37,7 +37,11 @@ class TaskListLayoutViewController: UIViewController, TaskListLayoutController {
         }
     }
     
-    func showDropdown() {
+    func showDropdown(preselectedIndex: Int?) {
+        if let preselectedIndex = preselectedIndex,
+            dropDown.selectedItem == nil {
+            dropDown.selectRow(at: preselectedIndex)
+        }
         dropDown.show()
     }
     

@@ -10,7 +10,7 @@ protocol TaskListLayoutController: class {
     var delegate: TaskListLayoutControllerDelegate? { get set }
     var tasks: [Task] { get set }
     
-    func showDropdown()
+    func showDropdown(preselectedIndex: Int?)
 }
 
 

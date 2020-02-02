@@ -54,6 +54,7 @@
 		CEB96D9423E726BE00D63123 /* RemindersTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB96D9323E726BE00D63123 /* RemindersTableViewCell.swift */; };
 		CEB96D9623E7276400D63123 /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB96D9523E7276400D63123 /* Reminder.swift */; };
 		CEC8E32D23E73CE300AB0E29 /* Date+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC8E32C23E73CE300AB0E29 /* Date+Convenience.swift */; };
+		CEC8E32F23E746A300AB0E29 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CEC8E32E23E746A300AB0E29 /* Settings.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +107,7 @@
 		CEB96D9323E726BE00D63123 /* RemindersTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersTableViewCell.swift; sourceTree = "<group>"; };
 		CEB96D9523E7276400D63123 /* Reminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
 		CEC8E32C23E73CE300AB0E29 /* Date+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Convenience.swift"; sourceTree = "<group>"; };
+		CEC8E32E23E746A300AB0E29 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		D3A615F76E1966EC5B59E22D /* Pods-DOITTaskManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DOITTaskManager.debug.xcconfig"; path = "Target Support Files/Pods-DOITTaskManager/Pods-DOITTaskManager.debug.xcconfig"; sourceTree = "<group>"; };
 		EFB907C01192568DAA5AEFFA /* Pods-DOITTaskManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DOITTaskManager.release.xcconfig"; path = "Target Support Files/Pods-DOITTaskManager/Pods-DOITTaskManager.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -201,6 +203,7 @@
 			children = (
 				CE05982223E2B9F20092AA1D /* Info.plist */,
 				CE05981D23E2B9F20092AA1D /* Assets.xcassets */,
+				CEC8E32E23E746A300AB0E29 /* Settings.bundle */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -407,6 +410,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEC8E32F23E746A300AB0E29 /* Settings.bundle in Resources */,
 				CE05982123E2B9F20092AA1D /* LaunchScreen.storyboard in Resources */,
 				CE6C710D23E3007C00619622 /* TaskList.storyboard in Resources */,
 				CE05981E23E2B9F20092AA1D /* Assets.xcassets in Resources */,
