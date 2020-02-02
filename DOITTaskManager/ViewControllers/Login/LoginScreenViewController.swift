@@ -69,8 +69,12 @@ extension LoginScreenViewController: LoginLayoutControllerDelegate {
         }
     }
     
-    func layoutController(_ layoutController: LoginLayoutController, didAskToRegisterWithEmail email: String, password: String) {
+    func layoutController(_ layoutController: LoginLayoutController, didAskToRegisterWithEmail email: String, password: String, confirmPassword: String) {
         guard isValid(email: email, password: password) else {
+            return
+        }
+        guard password == confirmPassword else {
+            showError(message: "Passwords do not match!")
             return
         }
         authManager?.register(withEmail: email, password: password)

@@ -14,5 +14,5 @@ protocol LoginLayoutController: class {
 
 protocol LoginLayoutControllerDelegate: class {
     func layoutController(_ layoutController: LoginLayoutController, didAskToLoginWithEmail email: String, password: String)
-    func layoutController(_ layoutController: LoginLayoutController, didAskToRegisterWithEmail email: String, password: String)
+    func layoutController(_ layoutController: LoginLayoutController, didAskToRegisterWithEmail email: String, password: String, confirmPassword: String)
 }
