@@ -134,7 +134,22 @@ class ScreenViewController: UIViewController {
             }
             message = "\(message). \(submessage)"
         }
+        if message.contains("Expired token") {
+            handleTokenError()
+            return
+        }
         showError(message: "Backend error: \(message)")
+    }
+    
+    private func handleTokenError() {
+        let primaryAction = UIAlertAction(title: "OK",
+                                          style: .default) { _ in
+                                            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                                            let controller = storyboard.instantiateViewController(withIdentifier: "Login")
+                                            UIApplication.shared.keyWindow?.rootViewController = controller
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        showError(message: "Backend error: Expired token. Press OK to reload the app", primaryAction: primaryAction, secondaryAction: cancelAction)
     }
     
     private func registerTapAroundGesture() {

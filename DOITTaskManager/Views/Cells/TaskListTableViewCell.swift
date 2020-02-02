@@ -34,13 +34,7 @@ class TaskListTableViewCell: UITableViewCell {
     func update(with task: Task) {
         titleLabel.text = task.title
         priorityLabel.text = task.priority.string
-        
         let date = Date(timeIntervalSince1970: task.expirationDate)
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
-        dateFormatter.locale = NSLocale.current
-        dateFormatter.dateFormat = "dd/MM/yy"
-        let strDate = dateFormatter.string(from: date)
-        dateLabel.text = strDate
+        dateLabel.text = date.represent(as: "dd/MM/yy")
     }
 }

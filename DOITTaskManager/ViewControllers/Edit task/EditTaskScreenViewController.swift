@@ -34,6 +34,7 @@ class EditTaskScreenViewController: ScreenViewController {
             openingDate = Date().timeIntervalSince1970
             bufferPriority = .high
             bufferDate = openingDate
+            bufferNotify = false
         }
     }
     
@@ -43,6 +44,7 @@ class EditTaskScreenViewController: ScreenViewController {
     private var bufferTitle: String?
     private var bufferPriority: Task.Priority?
     private var bufferDate: TimeInterval?
+    private var bufferNotify: Bool?
     
     private var taskManager: TaskManager? {
         didSet {
@@ -75,9 +77,9 @@ class EditTaskScreenViewController: ScreenViewController {
     override func backButtonTapped() {
         let bufferTitleWasChanged = bufferTitle != nil && bufferTitle?.isEmpty != true
         let newTaskWasChanged = style == .addTask
-            && (bufferTitleWasChanged || bufferPriority != .high || bufferDate != openingDate)
+            && (bufferTitleWasChanged || bufferPriority != .high || bufferDate != openingDate || bufferNotify != false)
         let existTaskWasChanged = style == .editTask
-            && (bufferTitle != task?.title || bufferPriority != task?.priority || bufferDate != task?.expirationDate)
+            && (bufferTitle != task?.title || bufferPriority != task?.priority || bufferDate != task?.expirationDate || bufferNotify != task?.notify)
         guard newTaskWasChanged || existTaskWasChanged else {
             navigationController?.popViewController(animated: true)
             return
@@ -101,6 +103,7 @@ class EditTaskScreenViewController: ScreenViewController {
     }
     
     
+    
     // MARK: - Private
     
     private func update() {
@@ -113,6 +116,7 @@ class EditTaskScreenViewController: ScreenViewController {
                 self?.bufferTitle = task.title
                 self?.bufferPriority = task.priority
                 self?.bufferDate = task.expirationDate
+                self?.bufferNotify = task.notify
                 self?.layoutController?.task = task
             }
             .catch { [weak self] error in
@@ -141,13 +145,19 @@ class EditTaskScreenViewController: ScreenViewController {
             return
         }
         guard let priority = bufferPriority?.rawValue,
-            let expirationDate = bufferDate else {
+            let expirationDate = bufferDate,
+            let bufferNotify = bufferNotify else {
                 return
+        }
+        guard expirationDate >= Date().timeIntervalSince1970 else {
+            showError(message: "Date couldn't be is the past!")
+            return
         }
         let task = Task(title: title,
                         identifier: taskIdentifier ?? 0,
                         priority: priority,
-                        expirationDate: expirationDate)
+                        expirationDate: expirationDate,
+                        notify: bufferNotify)
         let promise = style == .editTask ? taskManager?.updateTask(task) : taskManager?.addTask(task)
         promise?.then { [weak self] _ in
             self?.navigationController?.popViewController(animated: true)
@@ -178,6 +188,10 @@ extension EditTaskScreenViewController: EditTaskLayoutContollerDelegate {
     
     func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSetDateTo date: TimeInterval) {
         bufferDate = date
+    }
+    
+    func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSetNotifyTo notify: Bool) {
+        bufferNotify = notify
     }
     
     private func deleteTask() {

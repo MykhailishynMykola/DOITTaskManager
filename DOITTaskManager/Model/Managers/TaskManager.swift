@@ -21,6 +21,7 @@ class TaskManagerImp: DataManager, TaskManager {
     // MARK: - Properties
     
     private var authManager: AuthManager!
+    private var notificationManager: NotificationManager!
     
     
     
@@ -29,6 +30,7 @@ class TaskManagerImp: DataManager, TaskManager {
     override func setupDependencies(with resolver: Resolver) {
         super.setupDependencies(with: resolver)
         authManager = resolver.resolve(AuthManager.self)
+        notificationManager = resolver.resolve(NotificationManager.self)
     }
     
     
@@ -45,7 +47,8 @@ class TaskManagerImp: DataManager, TaskManager {
         }
         let requestBuilder: TaskRequestBuilder = .getDetails(identifier: identifier, token: token.value)
         return getData(with: requestBuilder)
-            .then { data in
+            .then { [weak self] data in
+                guard let `self` = self else { throw NSError.cancelledError() }
                 guard let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
                     throw DataManagerError.wrongResponseData
                 }
@@ -53,7 +56,14 @@ class TaskManagerImp: DataManager, TaskManager {
                     let task = Task(rawData: rawData) else {
                         throw TaskManagerError.failed(errorData: responseJSON)
                 }
-                return Promise(value: task)
+                return self.notificationManager.getNotifications()
+                    .then { notifications in
+                        guard let notification = notifications.first(where: { $0.identifier == "\(task.identifier)" }), !notification.delivered else {
+                            return Promise(value: task)
+                        }
+                        task.notify = true
+                        return Promise(value: task)
+                }
         }
     }
     
@@ -62,7 +72,12 @@ class TaskManagerImp: DataManager, TaskManager {
             return Promise(error: AuthError.noToken)
         }
         let requestBuilder: TaskRequestBuilder = .deleteTask(identifier: identifier, token: token.value)
-        return getData(with: requestBuilder).asVoid()
+        return getData(with: requestBuilder)
+            .then { [weak self] _ -> Promise<Void> in
+                guard let `self` = self else { throw NSError.cancelledError() }
+                let identifier = "\(identifier)"
+                return self.notificationManager.removeNotifications(with: [identifier])
+        }
     }
     
     func updateTask(_ task: Task) -> Promise<Void> {
@@ -70,7 +85,20 @@ class TaskManagerImp: DataManager, TaskManager {
             return Promise(error: AuthError.noToken)
         }
         let requestBuilder: TaskRequestBuilder = .updateTask(task, token: token.value)
-        return getData(with: requestBuilder).asVoid()
+        return getData(with: requestBuilder)
+            .then { [weak self] _ -> Promise<Void> in
+                guard let `self` = self else { throw NSError.cancelledError() }
+                let identifier = "\(task.identifier)"
+                return self.notificationManager.removeNotifications(with: [identifier])
+            }
+            .then { [weak self] _ -> Promise<Void> in
+                guard let `self` = self else { throw NSError.cancelledError() }
+                guard task.notify else {
+                    return Promise(value: ())
+                }
+                let newNotification = LocalNotification(task: task)
+                return self.notificationManager.addNotification(newNotification)
+        }
     }
     
     func addTask(_ task: Task) -> Promise<Void> {
@@ -78,7 +106,21 @@ class TaskManagerImp: DataManager, TaskManager {
             return Promise(error: AuthError.noToken)
         }
         let requestBuilder: TaskRequestBuilder = .addTask(task, token: token.value)
-        return getData(with: requestBuilder).asVoid()
+        return getData(with: requestBuilder).then { [weak self] data in
+            guard let `self` = self else { throw NSError.cancelledError() }
+            guard let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
+                throw DataManagerError.wrongResponseData
+            }
+            guard let rawData = responseJSON["task"] as? [String : Any],
+                let newTask = Task(rawData: rawData) else {
+                    throw TaskManagerError.failed(errorData: responseJSON)
+            }
+            guard task.notify else {
+                return Promise(value: ())
+            }
+            let newNotification = LocalNotification(task: newTask)
+            return self.notificationManager.addNotification(newNotification)
+        }
     }
     
     

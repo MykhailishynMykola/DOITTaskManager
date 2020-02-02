@@ -16,6 +16,6 @@ extension Task {
             let expirationDate = rawData["dueBy"] as? Int else {
                 return nil
         }
-        self.init(title: title, identifier: id, priority: priority, expirationDate: TimeInterval(expirationDate))
+        self.init(title: title, identifier: id, priority: priority, expirationDate: TimeInterval(expirationDate), notify: false)
     }
 }

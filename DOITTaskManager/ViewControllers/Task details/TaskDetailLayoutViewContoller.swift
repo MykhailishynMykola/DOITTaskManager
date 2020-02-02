@@ -34,15 +34,8 @@ class TaskDetailLayoutViewContoller: UIViewController, TaskDetailLayoutContoller
     
     private func update(with task: Task) {
         titleLabel.text = task.title
-        
         let date = Date(timeIntervalSince1970: task.expirationDate)
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
-        dateFormatter.locale = NSLocale.current
-        dateFormatter.dateFormat = "EEEE dd MMM, yyyy"
-        let strDate = dateFormatter.string(from: date)
-        dateLabel.text = strDate
-        
+        dateLabel.text = date.represent(as: "EEEE dd MMM, yyyy")
         priorityLabel.text = task.priority.string
     }
     

@@ -91,7 +91,7 @@ class TaskListScreenViewController: ScreenViewController {
     // MARK: - Actions
     
     @objc private func notificationButtonPressed() {
-        
+        presentViewController(withIdentifier: "Reminders", fromNavigation: true)
     }
     
     @objc private func sortButtonPressed() {

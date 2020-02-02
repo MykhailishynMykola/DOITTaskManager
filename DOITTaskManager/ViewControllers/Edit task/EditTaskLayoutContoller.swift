@@ -23,5 +23,6 @@ protocol EditTaskLayoutContollerDelegate: class {
     func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSetTitleTo title: String)
     func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSetPriorityTo priority: Task.Priority)
     func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSetDateTo date: TimeInterval)
+    func layoutController(_ layoutController: EditTaskLayoutContoller, didAskToSetNotifyTo notify: Bool)
 }
 

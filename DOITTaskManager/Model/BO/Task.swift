@@ -36,11 +36,13 @@ class Task {
     let identifier: Int
     let priority: Priority
     let expirationDate: TimeInterval
+    var notify: Bool
     
-    init(title: String, identifier: Int, priority: String, expirationDate: TimeInterval) {
+    init(title: String, identifier: Int, priority: String, expirationDate: TimeInterval, notify: Bool) {
         self.title = title
         self.identifier = identifier
         self.priority = Priority(rawValue: priority) ?? .normal
         self.expirationDate = expirationDate
+        self.notify = notify
     }
 }

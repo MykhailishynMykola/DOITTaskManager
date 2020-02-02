@@ -16,6 +16,8 @@ final class ManagersAssembly: Assembly {
             .inObjectScope(.container)
         container.register(TaskManager.self) { TaskManagerImp(resolver: $0)! }
             .inObjectScope(.container)
+        container.register(NotificationManager.self) { _ in NotificationManagerImp() }
+            .inObjectScope(.container)
     }
 }
 

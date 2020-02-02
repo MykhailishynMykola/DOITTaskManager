@@ -17,6 +17,7 @@ class EditTaskLayoutViewContoller: UIViewController, EditTaskLayoutContoller {
     @IBOutlet private weak var buttonWidthConstraint: NSLayoutConstraint!
     @IBOutlet private weak var expiredDatePicker: UIDatePicker!
     @IBOutlet private weak var deleteButton: UIButton!
+    @IBOutlet private weak var notificationSwitch: UISwitch!
     
     private var priorities: [Task.Priority] {
         return [.high, .normal, .low]
@@ -80,6 +81,8 @@ class EditTaskLayoutViewContoller: UIViewController, EditTaskLayoutContoller {
         selectButton(selectedButton)
         
         expiredDatePicker.date = Date(timeIntervalSince1970: task.expirationDate)
+        
+        notificationSwitch.isOn = task.notify
     }
     
     private func selectButton(_ selectedButton: UIButton) {
@@ -114,6 +117,13 @@ class EditTaskLayoutViewContoller: UIViewController, EditTaskLayoutContoller {
             return
         }
         selectButton(selectedButton)
+    }
+    
+    @IBAction private func notificationSwitchValueChanged(_ sender: Any) {
+        guard let switchElement = sender as? UISwitch else {
+            return
+        }
+        delegate?.layoutController(self, didAskToSetNotifyTo: switchElement.isOn)
     }
     
     @IBAction private func saveButtonPressed(_ sender: Any) {
