@@ -91,6 +91,8 @@ class ScreenViewController: UIViewController {
                 showError(message: "Notification service error: \(error)")
             case .noAccess:
                 showError(message: "Notification service error: No access granted. You could change it in Settings -> Notifications")
+            case .noUser:
+                showError(message: "Notification service error: Impossible to identify user")
             }
         default:
             break

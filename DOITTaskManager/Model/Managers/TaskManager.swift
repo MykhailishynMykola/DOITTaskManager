@@ -42,10 +42,10 @@ class TaskManagerImp: DataManager, TaskManager {
     }
     
     func getTaskDetails(by identifier: Int) -> Promise<Task> {
-        guard let token = authManager?.token else {
+        guard let token = authManager?.user?.token else {
             return Promise(error: AuthError.noToken)
         }
-        let requestBuilder: TaskRequestBuilder = .getDetails(identifier: identifier, token: token.value)
+        let requestBuilder: TaskRequestBuilder = .getDetails(identifier: identifier, token: token)
         return getData(with: requestBuilder)
             .then { [weak self] data in
                 guard let `self` = self else { throw NSError.cancelledError() }
@@ -68,10 +68,10 @@ class TaskManagerImp: DataManager, TaskManager {
     }
     
     func deleteTask(with identifier: Int) -> Promise<Void> {
-        guard let token = authManager?.token else {
+        guard let token = authManager?.user?.token else {
             return Promise(error: AuthError.noToken)
         }
-        let requestBuilder: TaskRequestBuilder = .deleteTask(identifier: identifier, token: token.value)
+        let requestBuilder: TaskRequestBuilder = .deleteTask(identifier: identifier, token: token)
         return getData(with: requestBuilder)
             .then { [weak self] _ -> Promise<Void> in
                 guard let `self` = self else { throw NSError.cancelledError() }
@@ -81,10 +81,10 @@ class TaskManagerImp: DataManager, TaskManager {
     }
     
     func updateTask(_ task: Task) -> Promise<Void> {
-        guard let token = authManager?.token else {
+        guard let user = authManager?.user else {
             return Promise(error: AuthError.noToken)
         }
-        let requestBuilder: TaskRequestBuilder = .updateTask(task, token: token.value)
+        let requestBuilder: TaskRequestBuilder = .updateTask(task, token: user.token)
         return getData(with: requestBuilder)
             .then { [weak self] _ -> Promise<Void> in
                 guard let `self` = self else { throw NSError.cancelledError() }
@@ -96,16 +96,16 @@ class TaskManagerImp: DataManager, TaskManager {
                 guard task.notify else {
                     return Promise(value: ())
                 }
-                let newNotification = LocalNotification(task: task)
+                let newNotification = LocalNotification(task: task, userIdentifier: user.identifier)
                 return self.notificationManager.addNotification(newNotification)
         }
     }
     
     func addTask(_ task: Task) -> Promise<Void> {
-        guard let token = authManager?.token else {
+       guard let user = authManager?.user else {
             return Promise(error: AuthError.noToken)
         }
-        let requestBuilder: TaskRequestBuilder = .addTask(task, token: token.value)
+        let requestBuilder: TaskRequestBuilder = .addTask(task, token: user.token)
         return getData(with: requestBuilder).then { [weak self] data in
             guard let `self` = self else { throw NSError.cancelledError() }
             guard let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
@@ -118,7 +118,7 @@ class TaskManagerImp: DataManager, TaskManager {
             guard task.notify else {
                 return Promise(value: ())
             }
-            let newNotification = LocalNotification(task: newTask)
+            let newNotification = LocalNotification(task: newTask, userIdentifier: user.identifier)
             return self.notificationManager.addNotification(newNotification)
         }
     }
@@ -128,10 +128,10 @@ class TaskManagerImp: DataManager, TaskManager {
     // MARK: - Private
     
     private func getTasks(with sortingOption: SortingOption?, page: Int, result: [Task]) -> Promise<[Task]> {
-        guard let token = authManager.token else {
+        guard let token = authManager?.user?.token else {
             return Promise(error: AuthError.noToken)
         }
-        let requestBuilder: TaskRequestBuilder = .getTasks(sortingOption: sortingOption, page: page, token: token.value)
+        let requestBuilder: TaskRequestBuilder = .getTasks(sortingOption: sortingOption, page: page, token: token)
         return getData(with: requestBuilder)
             .then { data in
                 guard let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {

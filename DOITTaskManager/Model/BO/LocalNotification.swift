@@ -15,23 +15,26 @@ class LocalNotification {
     let body: String
     let date: Date
     let delivered: Bool
+    let userIdentifier: String
     
     
     
     // MARK: - Init
     
-    init(identifier: String, body: String, date: Date, delivered: Bool) {
+    init(identifier: String, body: String, date: Date, delivered: Bool, userIdentifier: String) {
         self.identifier = identifier
         self.body = body
         self.date = date
         self.delivered = delivered
+        self.userIdentifier = userIdentifier
     }
     
-    init(task: Task) {
+    init(task: Task, userIdentifier: String) {
         self.identifier = "\(task.identifier)"
         self.body = task.title
         let expirationDate = Date(timeIntervalSince1970: task.expirationDate)
         self.date = expirationDate
         self.delivered = expirationDate < Date()
+        self.userIdentifier = userIdentifier
     }
 }

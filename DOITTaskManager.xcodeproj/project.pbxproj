@@ -24,7 +24,7 @@
 		CE6C710223E2DBBA00619622 /* RequestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C710123E2DBBA00619622 /* RequestBuilder.swift */; };
 		CE6C710423E2DC8500619622 /* AuthRequestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C710323E2DC8500619622 /* AuthRequestBuilder.swift */; };
 		CE6C710823E2E4A400619622 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C710723E2E4A400619622 /* DataManager.swift */; };
-		CE6C710B23E2E61100619622 /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C710A23E2E61100619622 /* Token.swift */; };
+		CE6C710B23E2E61100619622 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C710A23E2E61100619622 /* User.swift */; };
 		CE6C710D23E3007C00619622 /* TaskList.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE6C710C23E3007C00619622 /* TaskList.storyboard */; };
 		CE6C711023E3009700619622 /* TaskListScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C710F23E3009700619622 /* TaskListScreenViewController.swift */; };
 		CE6C711223E300D500619622 /* TaskListLayoutController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6C711123E300D500619622 /* TaskListLayoutController.swift */; };
@@ -77,7 +77,7 @@
 		CE6C710123E2DBBA00619622 /* RequestBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestBuilder.swift; sourceTree = "<group>"; };
 		CE6C710323E2DC8500619622 /* AuthRequestBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRequestBuilder.swift; sourceTree = "<group>"; };
 		CE6C710723E2E4A400619622 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
-		CE6C710A23E2E61100619622 /* Token.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
+		CE6C710A23E2E61100619622 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CE6C710C23E3007C00619622 /* TaskList.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TaskList.storyboard; sourceTree = "<group>"; };
 		CE6C710F23E3009700619622 /* TaskListScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListScreenViewController.swift; sourceTree = "<group>"; };
 		CE6C711123E300D500619622 /* TaskListLayoutController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListLayoutController.swift; sourceTree = "<group>"; };
@@ -265,7 +265,7 @@
 			isa = PBXGroup;
 			children = (
 				CE6C713B23E47EFA00619622 /* SortingOption.swift */,
-				CE6C710A23E2E61100619622 /* Token.swift */,
+				CE6C710A23E2E61100619622 /* User.swift */,
 				CE6C711A23E305AD00619622 /* Task.swift */,
 				CE6C713723E449F100619622 /* DeviceInfo.swift */,
 				CEB96D8823E706D500D63123 /* LocalNotification.swift */,
@@ -465,7 +465,7 @@
 				CE05982E23E2BEB20092AA1D /* ScreenViewController.swift in Sources */,
 				CEB96D9223E7249D00D63123 /* RemindersLayoutViewContoller.swift in Sources */,
 				CE6C712223E319B000619622 /* Task+RawData.swift in Sources */,
-				CE6C710B23E2E61100619622 /* Token.swift in Sources */,
+				CE6C710B23E2E61100619622 /* User.swift in Sources */,
 				CE6C710423E2DC8500619622 /* AuthRequestBuilder.swift in Sources */,
 				CE05983623E2CC830092AA1D /* AuthManager.swift in Sources */,
 				CE6C713223E439A300619622 /* EditTaskLayoutContoller.swift in Sources */,

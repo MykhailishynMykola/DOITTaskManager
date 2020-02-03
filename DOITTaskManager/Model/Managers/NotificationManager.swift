@@ -8,6 +8,7 @@
 
 import UserNotifications
 import PromiseKit
+import Swinject
 
 protocol NotificationManager {
     func addNotification(_ notification: LocalNotification) -> Promise<Void>
@@ -17,10 +18,11 @@ protocol NotificationManager {
 }
 
 
-class NotificationManagerImp: NSObject, NotificationManager {
+class NotificationManagerImp: NSObject, NotificationManager, ResolverInitializable {
     // MARK: - Properties
     
     private let center = UNUserNotificationCenter.current()
+    private var authManager: AuthManager!
     
     
     
@@ -33,14 +35,35 @@ class NotificationManagerImp: NSObject, NotificationManager {
     
     
     
+    // MARK: - ResolverInitializable
+    
+    required convenience init?(resolver: Resolver) {
+        self.init()
+        setupDependencies(with: resolver)
+    }
+    
+    
+    
+    // MARK: - Public
+    
+    func setupDependencies(with resolver: Resolver) {
+        authManager = resolver.resolve(AuthManager.self)
+    }
+    
+    
+    
     // MARK: - NotificationManager
     
     func addNotification(_ notification: LocalNotification) -> Promise<Void> {
         return checkAccess()
             .then { [weak self] _ -> Promise<Void> in
                 guard let `self` = self else { throw NSError.cancelledError() }
+                guard let user = self.authManager.user else {
+                    throw NotificationManagerError.noUser
+                }
                 let content = UNMutableNotificationContent()
                 content.title = "Reminder:"
+                content.userInfo = ["user": user.identifier]
                 content.body = notification.body
                 content.sound = UNNotificationSound.default
                 let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: notification.date)
@@ -62,11 +85,13 @@ class NotificationManagerImp: NSObject, NotificationManager {
     }
     
     func removeAllNotifications() -> Promise<Void> {
-        return checkAccess()
-            .then { [weak self] _ -> Promise<Void> in
+        return getNotifications()
+            .then { [weak self] notifications -> Promise<Void> in
                 guard let `self` = self else { throw NSError.cancelledError() }
-                self.center.removeAllDeliveredNotifications()
-                self.center.removeAllPendingNotificationRequests()
+                let deliveredIds = notifications.filter { $0.delivered }.map { $0.identifier }
+                let pendingIds = notifications.filter { !$0.delivered }.map { $0.identifier }
+                self.center.removeDeliveredNotifications(withIdentifiers: deliveredIds)
+                self.center.removePendingNotificationRequests(withIdentifiers: pendingIds)
                 return Promise(value: ())
         }
     }
@@ -77,8 +102,12 @@ class NotificationManagerImp: NSObject, NotificationManager {
                 guard let `self` = self else { throw NSError.cancelledError() }
                 return when(fulfilled: self.getPendingNotifications(), self.getDeliveredNotifications())
             }
-            .then { pendingNotifications, deliveredNotifications in
+            .then { pendingNotifications, deliveredNotifications -> Promise<[LocalNotification]> in
                 return Promise(value: pendingNotifications + deliveredNotifications)
+            }
+            .then { [weak self] allNotifications -> [LocalNotification] in
+                guard let user = self?.authManager.user else { throw NotificationManagerError.noUser }
+                return allNotifications.filter { $0.userIdentifier == user.identifier }
         }
     }
     
@@ -113,13 +142,15 @@ class NotificationManagerImp: NSObject, NotificationManager {
                 return nil
             }
             let dateComponents = trigger.dateComponents
-            guard let date = Calendar.current.date(from: dateComponents) else {
+            guard let date = Calendar.current.date(from: dateComponents),
+                let userIdentifier = request.content.userInfo["user"] as? String else {
                 return nil
             }
             return LocalNotification(identifier: request.identifier,
                                      body: request.content.body,
                                      date: date,
-                                     delivered: delivered)
+                                     delivered: delivered,
+                                     userIdentifier: userIdentifier)
         }
     }
     
@@ -159,5 +190,6 @@ extension NotificationManagerImp: UNUserNotificationCenterDelegate {
 
 enum NotificationManagerError: Error {
     case noAccess
+    case noUser
     case notificationCenterError(_ error: Error)
 }
