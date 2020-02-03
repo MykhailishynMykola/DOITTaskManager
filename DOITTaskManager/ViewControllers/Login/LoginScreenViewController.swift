@@ -49,6 +49,11 @@ class LoginScreenViewController: ScreenViewController {
             break
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        layoutController?.reset()
+    }
 }
 
 

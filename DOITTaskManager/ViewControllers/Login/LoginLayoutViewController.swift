@@ -25,6 +25,13 @@ class LoginLayoutViewController: UIViewController, LoginLayoutController {
     
     weak var delegate: LoginLayoutControllerDelegate?
     
+    func reset() {
+        emailTextField.text = nil
+        passwordTextField.text = nil
+        confirmPasswordTextField.text = nil
+        configureUI()
+    }
+    
     
     
     // MARK: - Overrides
@@ -40,7 +47,7 @@ class LoginLayoutViewController: UIViewController, LoginLayoutController {
     
     private func configureUI() {
         titleLabel.text = "Sign in"
-        loginButton.titleLabel?.text = "LOG IN"
+        loginButton.setTitle("LOG IN", for: .normal)
         switchElement.isOn = false
         confirmPasswordHeightConstraint.constant = 0
     }

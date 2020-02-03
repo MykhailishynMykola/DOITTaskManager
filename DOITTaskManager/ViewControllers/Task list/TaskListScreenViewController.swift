@@ -56,7 +56,11 @@ class TaskListScreenViewController: ScreenViewController {
         
         let listImage = UIImage(systemName: "list.bullet")
         let listButton = UIBarButtonItem(image: listImage, style: .plain, target: self, action: #selector(sortButtonPressed))
-        navigationItem.rightBarButtonItem = listButton
+        
+        let exitImage = UIImage(systemName: "person.crop.circle.fill")
+        let exitButton = UIBarButtonItem(image: exitImage, style: .plain, target: self, action: #selector(exitButtonPressed))
+        
+        navigationItem.rightBarButtonItems = [exitButton, listButton]
     }
     
     override func setupDependencies(with resolver: Resolver) {
@@ -103,6 +107,18 @@ class TaskListScreenViewController: ScreenViewController {
     
     @objc private func sortButtonPressed() {
         layoutController?.showDropdown(preselectedIndex: preselectedIndex)
+    }
+    
+    @objc private func exitButtonPressed() {
+        let logoutAction = UIAlertAction(title: "Logout",
+                                       style: .default) { [weak self] _ in
+                                        self?.dismiss(animated: true, completion: nil)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        showError(title: "Notification",
+                  message: "Are you sure you want to log out?",
+                  primaryAction: logoutAction,
+                  secondaryAction: cancelAction)
     }
 }
 

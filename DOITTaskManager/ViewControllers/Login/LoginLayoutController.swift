@@ -8,6 +8,8 @@
 
 protocol LoginLayoutController: class {
     var delegate: LoginLayoutControllerDelegate? { get set }
+    
+    func reset()
 }
 
 
