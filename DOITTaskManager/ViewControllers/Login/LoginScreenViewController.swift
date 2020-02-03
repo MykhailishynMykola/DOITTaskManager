@@ -79,7 +79,7 @@ extension LoginScreenViewController: LoginLayoutControllerDelegate {
         }
         authManager?.register(withEmail: email, password: password)
             .then { [weak self] in
-                self?.presentViewController(withIdentifier: "TaskList")
+                self?.presentViewController(withIdentifier: "TaskList", fromNavigation: true)
             }
             .catch { [weak self] error in
                 self?.handleError(error)
