@@ -11,7 +11,7 @@ import Foundation
 extension Date {
     func represent(as dateFormat: String) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
+        dateFormatter.timeZone = TimeZone.current
         dateFormatter.locale = NSLocale.current
         dateFormatter.dateFormat = "dd/MM/yy HH:mm:ss"
         return dateFormatter.string(from: self)
