@@ -62,7 +62,6 @@ class AuthManagerImp: DataManager, AuthManager {
                 user = User(identifier: email, token: tokenValue)
                 return fulfill(())
             }
-            return reject(DataManagerError.wrongResponseData)
         })
     }
 }
