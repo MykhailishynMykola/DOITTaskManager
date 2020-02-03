@@ -171,7 +171,6 @@
 				CE6C710623E2E48800619622 /* Request builders */,
 				CE6C710523E2E47900619622 /* Managers */,
 				CE05983823E2CDA70092AA1D /* DI */,
-				CE05983723E2CCA00092AA1D /* Auth */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -229,13 +228,6 @@
 				CE05983223E2BF5D0092AA1D /* LoginLayoutViewController.swift */,
 			);
 			path = Login;
-			sourceTree = "<group>";
-		};
-		CE05983723E2CCA00092AA1D /* Auth */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Auth;
 			sourceTree = "<group>";
 		};
 		CE05983823E2CDA70092AA1D /* DI */ = {

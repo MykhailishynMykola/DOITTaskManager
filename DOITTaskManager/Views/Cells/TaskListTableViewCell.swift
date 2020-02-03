@@ -18,14 +18,13 @@ class TaskListTableViewCell: UITableViewCell {
     
     
     
-    // MARK: - Override
+    // MARK: - Overrides
     
     override func awakeFromNib() {
         super.awakeFromNib()
         selectionStyle = .none
         iconView.image = UIImage(systemName: "chevron.right")
     }
-    
     
     
     
