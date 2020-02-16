@@ -126,11 +126,11 @@ class TaskListScreenViewController: ScreenViewController {
 
 extension TaskListScreenViewController: TaskListLayoutControllerDelegate {
     func layoutController(_ layoutController: TaskListLayoutController, didAskToSelectRowWith index: Int) {
-        guard let detailViewController = presentViewController(withIdentifier: "TaskDetails", fromNavigation: true) as? TaskDetailScreenViewController,
+        guard let detailViewController = presentViewController(withIdentifier: "TaskDetails", fromNavigation: true) as? TaskDetailView,
             tasks.indices.contains(index) else {
             return
         }
-        detailViewController.taskIdentifier = tasks[index].identifier
+        TaskDetailWireFrame.createTaskDetailModule(with: detailViewController, taskIdentifier: tasks[index].identifier)
     }
     
     func layoutController(_ layoutController: TaskListLayoutController, didAskToSortBy option: SortingOption) {

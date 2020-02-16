@@ -103,7 +103,7 @@ class TaskDetailScreenViewController: ScreenViewController {
 
 extension TaskDetailScreenViewController: TaskDetailLayoutContollerDelegate {
     func layoutControllerDidAskToRemoveTask(_ layoutController: TaskDetailLayoutContoller) {
-        showDeleteError() { [weak self] in self?.deleteTask()}
+        showDeleteError() { [weak self] in self?.deleteTask() }
     }
     
     private func deleteTask() {
